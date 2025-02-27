@@ -1,0 +1,28 @@
+{
+  "name": "@vizor/app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist-mono": "^5.0.1",
+    "@fontsource/geist-sans": "^5.1.0",
+    "@pinia/nuxt": "0.10.1",
+    "@vizor/client": "workspace:*",
+    "@vueuse/nuxt": "12.7.0",
+    "nuxt": "^3.15.4",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "stylelint": "^16.14.1",
+    "stylelint-config-property-sort-order-smacss": "^10.0.0",
+    "stylelint-config-recommended-vue": "^1.6.0",
+    "stylelint-config-standard": "^37.0.0"
+  }
+}
