@@ -311,7 +311,59 @@ function processToolCallSpans(
     const toolName = toolSpan.attributes['ai.toolCall.name'] as string;
     const toolResult = toolSpan.attributes['ai.toolCall.result'] as string;
 
-    if (toolCallId && toolName && toolResult) {
+    // Check if this span has an error status
+    const hasError = toolSpan.status.code === 2; // Error status code
+    const errorMessage = toolSpan.status.message;
+    const errorType =
+      (toolSpan.events.find(
+        (event) =>
+          event.name === 'exception' &&
+          event.attributes &&
+          typeof event.attributes['exception.type'] === 'string',
+      )?.attributes?.['exception.type'] as string) || 'Error';
+
+    if (toolCallId && toolName) {
+      let result:
+        | {
+            status: 'success';
+            output: unknown;
+          }
+        | {
+            status: 'error';
+            error: {
+              type: string;
+              message: string;
+            };
+          };
+
+      if (hasError) {
+        // Handle error case
+        result = {
+          status: 'error',
+          error: {
+            type: errorType || 'Error',
+            message:
+              errorMessage || 'Unknown error occurred during tool execution',
+          },
+        };
+      } else if (toolResult) {
+        // Handle success case
+        const parsedResult = tryParseJson(toolResult, toolResult);
+        result = {
+          status: 'success',
+          output: parsedResult,
+        };
+      } else {
+        // Fallback for missing result but no error
+        result = {
+          status: 'error',
+          error: {
+            type: 'MissingResult',
+            message: 'No result was provided for this tool call',
+          },
+        };
+      }
+
       messages.push({
         role: 'tool',
         content: [
@@ -319,7 +371,7 @@ function processToolCallSpans(
             type: 'tool-result',
             toolCallId,
             toolName,
-            result: tryParseJson(toolResult, toolResult),
+            result,
           },
         ],
         timestamp: toolSpan.endTime[0] * 1000,

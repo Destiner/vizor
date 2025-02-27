@@ -16,8 +16,10 @@ import '@fontsource-variable/geist-mono/index.css';
 :root {
   --color-background-primary: rgb(19 19 19);
   --color-background-secondary: rgb(32 32 32);
+  --color-background-error: rgb(40 10 10);
   --color-text-primary: rgb(224 224 224);
   --color-text-secondary: rgb(148 148 148);
+  --color-text-error: rgb(255 100 100);
   --color-border-primary: rgb(64 64 64);
   --font-family-sans:
     'Geist Sans', -apple-system, blinkmacsystemfont, 'Segoe UI', roboto,

@@ -95,7 +95,26 @@
               </div>
             </div>
             <div class="tool-result-content">
-              {{ part.result }}
+              <div
+                v-if="part.result.status === 'success'"
+                class="tool-result-success"
+              >
+                <IconCheckCircled class="icon" />
+                {{ part.result.output }}
+              </div>
+              <template v-else>
+                <div class="tool-result-error">
+                  <IconCrossCircled class="icon" />
+                  <div class="tool-result-error-content">
+                    <div class="tool-result-error-type">
+                      {{ part.result.error.type }}
+                    </div>
+                    <div class="tool-result-error-message">
+                      {{ part.result.error.message }}
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -109,6 +128,8 @@ import type { Message } from '~/server/store';
 
 import IconText from '../__common/icons/IconText.vue';
 import IconCode from '../__common/icons/IconCode.vue';
+import IconCheckCircled from '../__common/icons/IconCheckCircled.vue';
+import IconCrossCircled from '../__common/icons/IconCrossCircled.vue';
 
 defineProps<{
   message: Message;
@@ -175,5 +196,41 @@ defineProps<{
   color: var(--color-text-secondary);
   font-family: var(--font-family-mono);
   font-size: 14px;
+}
+
+.tool-result-success,
+.tool-result-error {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 4px;
+
+  .icon {
+    margin-top: 2px;
+  }
+}
+
+.tool-result-success {
+  background: var(--color-background-secondary);
+}
+
+.tool-result-error {
+  border: 1px solid var(--color-text-error);
+  background: var(--color-background-error);
+  color: var(--color-text-error);
+
+  .icon {
+    color: var(--color-text-error);
+  }
+
+  .tool-result-error-content {
+    display: flex;
+    gap: 2px;
+    flex-direction: column;
+  }
+
+  .tool-result-error-type {
+    font-weight: 600;
+  }
 }
 </style>

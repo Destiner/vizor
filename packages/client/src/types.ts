@@ -84,7 +84,18 @@ interface ToolResultPart {
   type: 'tool-result';
   toolCallId: string;
   toolName: string;
-  result: unknown;
+  result:
+    | {
+        status: 'success';
+        output: unknown;
+      }
+    | {
+        status: 'error';
+        error: {
+          type: string;
+          message: string;
+        };
+      };
 }
 
 export type {
