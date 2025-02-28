@@ -25,5 +25,6 @@ defineProps<{
   flex: 1;
   flex-direction: column;
   padding: 16px;
+  overflow: scroll;
 }
 </style>
