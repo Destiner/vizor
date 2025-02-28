@@ -9,11 +9,11 @@
         @click="selectChat(chatItem.id)"
       >
         <div class="time">
-          {{ formatRelativeTime(chatItem.latestMessageTimestamp) }}
+          {{ formatRelativeTime(getMessageTimestamp(chatItem.latestMessage)) }}
         </div>
         <div class="content">
           <div class="preview">
-            {{ chatItem.latestMessageContent }}
+            {{ getMessageContent(chatItem.latestMessage) }}
           </div>
           <div class="footer">
             <div class="model">
@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import type { ChatItem } from '~/server/api/list.get';
+import type { Message } from '~/server/store';
 
 const { items } = defineProps<{
   items: ChatItem[];
@@ -47,6 +48,44 @@ const emit = defineEmits<{
 
 function selectChat(id: string) {
   emit('select', id);
+}
+
+function getMessageTimestamp(message: Message | null): number | null {
+  if (!message) {
+    return null;
+  }
+  switch (message.role) {
+    case 'system':
+    case 'user':
+      return null;
+    case 'assistant':
+    case 'tool':
+      return message.timestamp ?? null;
+  }
+}
+
+function getMessageContent(message: Message | null): string | null {
+  if (!message) {
+    return null;
+  }
+  switch (message.role) {
+    case 'system':
+      return message.content;
+    case 'user':
+      return typeof message.content === 'string' ? message.content : null;
+    case 'assistant':
+      return typeof message.content === 'string' ? message.content : null;
+    case 'tool': {
+      const lastPart = message.content.at(-1);
+      if (!lastPart) {
+        return null;
+      }
+      if (lastPart.result.status === 'error') {
+        return 'Tool call failed';
+      }
+      return lastPart.result.output as string;
+    }
+  }
 }
 
 function getMessageCountLabel(count: number) {

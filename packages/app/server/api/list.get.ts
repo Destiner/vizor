@@ -1,12 +1,11 @@
-import { type Chat, type ChatMetadata, getChats } from '../store';
+import { type Chat, type ChatMetadata, type Message, getChats } from '../store';
 
 interface ChatItem {
   id: string;
   metadata: ChatMetadata;
   messageCount: number;
   toolCallCount: number;
-  latestMessageTimestamp: number | null;
-  latestMessageContent: string | null;
+  latestMessage: Message | null;
 }
 
 export default defineEventHandler(async (event) => {
@@ -19,51 +18,33 @@ export default defineEventHandler(async (event) => {
     messageCount: chat.messages.length,
     toolCallCount: chat.messages.filter((message) => message.role === 'tool')
       .length,
-    latestMessageTimestamp: getLatestMessageTimestamp(chat),
-    latestMessageContent: getLatestMessageContent(chat),
+    latestMessage: getLatestMessage(chat),
   }));
   // Sort by latest message timestamp
   items.sort((a, b) => {
-    return (b.latestMessageTimestamp ?? 0) - (a.latestMessageTimestamp ?? 0);
+    return (
+      (getTimestamp(b.latestMessage) ?? 0) -
+      (getTimestamp(a.latestMessage) ?? 0)
+    );
   });
   return items;
 });
 
-function getLatestMessageTimestamp(chat: Chat): number | null {
-  const lastMessage = chat.messages[chat.messages.length - 1];
-  if (!lastMessage) {
-    return null;
-  }
-  switch (lastMessage.role) {
-    case 'system':
-      return null;
-    case 'user':
-      return null;
-    case 'assistant':
-      return lastMessage.timestamp ?? null;
-    case 'tool':
-      return lastMessage.timestamp ?? null;
-  }
+function getLatestMessage(chat: Chat): Message | null {
+  return chat.messages[chat.messages.length - 1] ?? null;
 }
 
-function getLatestMessageContent(chat: Chat): string | null {
-  const lastMessage = chat.messages[chat.messages.length - 1];
-  if (!lastMessage) {
+function getTimestamp(message: Message | null): number | null {
+  if (!message) {
     return null;
   }
-  switch (lastMessage.role) {
+  switch (message.role) {
     case 'system':
-      return null;
     case 'user':
-      return typeof lastMessage.content === 'string'
-        ? lastMessage.content
-        : null;
-    case 'assistant':
-      return typeof lastMessage.content === 'string'
-        ? lastMessage.content
-        : null;
-    case 'tool':
       return null;
+    case 'assistant':
+    case 'tool':
+      return message.timestamp ?? null;
   }
 }
 
