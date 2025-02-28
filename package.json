@@ -1,5 +1,10 @@
 {
-	"name": "vizor",
-	"private": true,
-	"workspaces": ["packages/*"]
+  "name": "vizor",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "server:start": "cd packages/app && bun run dev"
+  }
 }
