@@ -1,8 +1,8 @@
 import * as readline from 'node:readline';
 
 import { openai } from '@ai-sdk/openai';
-import { Sdk } from '@vizor/client';
 import { generateText, tool, type CoreMessage } from 'ai';
+import { Sdk } from 'vizor-sdk';
 import { z } from 'zod';
 
 const openAiApiKey = process.env.OPENAI_API_KEY;

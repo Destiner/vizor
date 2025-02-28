@@ -1,5 +1,5 @@
 {
-  "name": "@vizor/client",
+  "name": "vizor-sdk",
   "module": "src/index.ts",
   "exports": {
     ".": "./src/index.ts"

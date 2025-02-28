@@ -1,4 +1,4 @@
-import type { Chat, Tool, Message } from '@vizor/client';
+import type { Chat, Tool, Message } from 'vizor-sdk';
 import type { ZodAny } from 'zod';
 
 interface ChatMetadata {
