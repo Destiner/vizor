@@ -11,7 +11,7 @@ import type {
   TextPart,
   ToolCallPart,
   AssistantMessage,
-} from './types';
+} from './types.js';
 
 class Client {
   constructor(private readonly url: string) {
@@ -324,7 +324,9 @@ function spansToChats(spans: ReadableSpan[]): Chat[] {
       chats.push({
         id: rootSpan.spanContext().traceId,
         metadata: {
-          provider: provider.includes('.') ? provider.split('.')[0] : provider,
+          provider: provider.includes('.')
+            ? provider.split('.')[0] || ''
+            : provider,
           model,
           tools,
         },
