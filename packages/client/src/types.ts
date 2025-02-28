@@ -37,12 +37,14 @@ interface TextPart {
 
 interface ImagePart {
   type: 'image';
-  image: string;
+  image: DataContent | URL;
 }
+
+type DataContent = string | Uint8Array | ArrayBuffer | Buffer;
 
 interface FilePart {
   type: 'file';
-  file: string;
+  data: DataContent | URL;
 }
 
 interface AssistantMessage {
