@@ -35,17 +35,20 @@ async function main() {
       system:
         'You are a helpful assistant. Always respond in plain text. Only use lowercase letters for text.',
       tools: {
-        weather: tool({
-          description: 'Get the weather in a location',
+        countLetters: tool({
+          description: 'Count the number of letters in a word',
           parameters: z.object({
-            location: z
-              .string()
-              .describe('The location to get the weather for'),
+            word: z.string().describe('The word to count the letters of'),
+            letter: z.string().describe('The letter to count'),
           }),
-          execute: async ({ location }) => {
+          execute: async ({ word, letter }) => {
+            if (word === 'strawberry') {
+              throw new Error('Impossible to count');
+            }
             return {
-              location,
-              temperature: 72 + Math.floor(Math.random() * 21) - 10,
+              word,
+              letter,
+              count: word.split(letter).length - 1,
             };
           },
         }),
