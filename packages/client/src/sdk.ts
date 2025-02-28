@@ -22,7 +22,7 @@ class Exporter implements SpanExporter {
   client: Client;
 
   constructor() {
-    this.client = new Client('http://localhost:3000');
+    this.client = new Client('http://localhost:19323');
   }
 
   async export(
