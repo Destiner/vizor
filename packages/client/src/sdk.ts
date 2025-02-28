@@ -38,7 +38,6 @@ class Exporter implements SpanExporter {
     resultCallback: (result: ExportResult) => void,
   ): Promise<void> {
     const chats = spansToChats(spans);
-    console.log('export', spans, chats);
     await this.client.log(chats);
     resultCallback({ code: ExportResultCode.SUCCESS });
   }
