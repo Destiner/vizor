@@ -29,8 +29,8 @@ class Client {
 class Exporter implements SpanExporter {
   client: Client;
 
-  constructor() {
-    this.client = new Client('http://localhost:19323');
+  constructor(url: string) {
+    this.client = new Client(url);
   }
 
   async export(
@@ -46,10 +46,14 @@ class Exporter implements SpanExporter {
   async shutdown(): Promise<void> {}
 }
 
-const sdk = new NodeSDK({
-  traceExporter: new Exporter(),
-  instrumentations: [getNodeAutoInstrumentations()],
-});
+class Sdk extends NodeSDK {
+  constructor(url = 'http://localhost:19323') {
+    super({
+      traceExporter: new Exporter(url),
+      instrumentations: [getNodeAutoInstrumentations()],
+    });
+  }
+}
 
 function spansToChats(spans: ReadableSpan[]): Chat[] {
   // Group spans by trace ID to separate different conversations
@@ -421,4 +425,4 @@ function tryParseJson(text: string, fallback: unknown): unknown {
   }
 }
 
-export { sdk };
+export { Sdk };

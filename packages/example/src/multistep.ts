@@ -1,7 +1,7 @@
 import * as readline from 'node:readline';
 
 import { openai } from '@ai-sdk/openai';
-import { sdk } from '@vizor/client';
+import { Sdk } from '@vizor/client';
 import { generateText, tool, type CoreMessage } from 'ai';
 import { z } from 'zod';
 
@@ -15,6 +15,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+const sdk = new Sdk();
 sdk.start();
 
 async function main() {
