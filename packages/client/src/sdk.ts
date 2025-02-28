@@ -2,8 +2,16 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import type { SpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { type ExportResult, ExportResultCode } from '@opentelemetry/core';
+import type { CoreMessage } from 'ai';
 
-import type { Chat, Tool, Message, TextPart, ToolCallPart } from './types';
+import type {
+  Chat,
+  Tool,
+  Message,
+  TextPart,
+  ToolCallPart,
+  AssistantMessage,
+} from './types';
 
 class Client {
   constructor(private readonly url: string) {
@@ -30,6 +38,7 @@ class Exporter implements SpanExporter {
     resultCallback: (result: ExportResult) => void,
   ): Promise<void> {
     const chats = spansToChats(spans);
+    console.log('export', spans, chats);
     await this.client.log(chats);
     resultCallback({ code: ExportResultCode.SUCCESS });
   }
@@ -102,23 +111,46 @@ function spansToChats(spans: ReadableSpan[]): Chat[] {
     // Extract messages
     const messages: Message[] = [];
 
-    // Extract user message from prompt
-    const userMessageSpan = generateSpans[0]; // First generate span usually contains the user message
+    // Extract all prompt messages
+    const userMessageSpan = generateSpans[0]; // First generate span usually contains the prompt messages
     if (userMessageSpan) {
       const promptMessagesStr =
         userMessageSpan.attributes['ai.prompt.messages'];
       if (typeof promptMessagesStr === 'string') {
         try {
-          const promptMessages = JSON.parse(promptMessagesStr);
-          const userMessage = promptMessages.find(
-            (msg: { role: string }) => msg.role === 'user',
-          );
-          if (userMessage) {
-            const userContent = userMessage.content;
-            messages.push({
-              role: 'user',
-              content: Array.isArray(userContent) ? userContent : userContent,
-            });
+          const promptMessages = JSON.parse(promptMessagesStr) as CoreMessage[];
+
+          // Process all messages from the prompt
+          for (const promptMessage of promptMessages) {
+            if (promptMessage.role === 'system') {
+              messages.push({
+                role: 'system',
+                content: promptMessage.content,
+              });
+            } else if (promptMessage.role === 'user') {
+              messages.push({
+                role: 'user',
+                content: promptMessage.content,
+              });
+            } else if (promptMessage.role === 'assistant') {
+              messages.push({
+                role: 'assistant',
+                content: promptMessage.content,
+              } as AssistantMessage);
+            } else if (promptMessage.role === 'tool') {
+              messages.push({
+                role: 'tool',
+                content: promptMessage.content.map((c) => ({
+                  type: 'tool-result',
+                  toolCallId: c.toolCallId,
+                  toolName: c.toolName,
+                  result: {
+                    status: 'success',
+                    output: c.result,
+                  },
+                })),
+              });
+            }
           }
         } catch (e) {
           // Fallback to simple prompt text if parsing fails
