@@ -1,10 +1,14 @@
 {
   "name": "vizor-sdk",
   "module": "src/index.ts",
+  "version": "1.0.0",
   "exports": {
     ".": "./src/index.ts"
   },
   "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@opentelemetry/auto-instrumentations-node": "^0.56.1",
     "@opentelemetry/core": "^1.30.1",
