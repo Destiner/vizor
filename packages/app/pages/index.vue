@@ -13,9 +13,13 @@
 </template>
 
 <script setup lang="ts">
+import { useIntervalFn } from '@vueuse/core';
+
 import ChatView from '~/components/home/ChatView.vue';
 
-const { data: chats } = await useFetch('/api/list');
+const { data: chats, refresh: refreshChats } = await useFetch('/api/list');
+
+useIntervalFn(refreshChats, 1000);
 
 const firstChatId = computed<string | null>(() => {
   if (!chats.value) {
