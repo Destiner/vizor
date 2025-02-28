@@ -2,13 +2,16 @@
 
 LLM Monitoring for Vercel AI SDK
 
+<img width="1710" alt="Screenshot 2025-02-28 at 13 17 47" src="https://github.com/user-attachments/assets/3b4f32c8-b742-4e60-aade-e2a04d0b8ef7" />
+
+
 Features:
 
-- Multi-step support
+- Multi-step conversations
 - Tool calling
 - Error handling
-- [Planned] streaming support
-- [Planned] non-text message content (e.g. images)
+- *(planned)* Streaming support
+- *(planned)* Non-text message content (e.g. images)
 
 ## Setup
 
@@ -51,4 +54,4 @@ bun i
 bun run server:start
 ```
 
-4. Open the server UI at [http://localhost:19323](`http://localhost:19323`).
+4. Open the server UI at [`http://localhost:19323`](http://localhost:19323).
