@@ -31,7 +31,12 @@ import { Sdk } from "vizor-sdk";
 const sdk = new Sdk();
 sdk.start();
 
-// LLM code
+const { text } = await generateText({
+  // Enable telemetry
+  experimental_telemetry: {
+    isEnabled: true,
+  },
+});
 ```
 
 ### Server
